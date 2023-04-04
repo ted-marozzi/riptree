@@ -5,7 +5,7 @@
             "name": "(OSX) Launch",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceRoot}/target/debug/rip_tree",
+            "program": "${workspaceRoot}/target/debug/riptree",
             "args": [],
             "cwd": "${workspaceRoot}",
         }

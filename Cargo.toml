@@ -1,5 +1,5 @@
 [package]
-name = "rip_tree"
+name = "riptree"
 version = "0.1.0"
 edition = "2021"
 
