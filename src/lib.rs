@@ -11,18 +11,28 @@ pub fn run(path: &Path) {
 fn print_dir_recursively(path: &Path, line_prefix: &str) {
     let mut dir_entries = fs::read_dir(path).unwrap().map(|d| d.unwrap()).peekable();
     while let Some(entry) = dir_entries.next() {
-        let file_name = entry.file_name();
-        let file_name_str = file_name.to_str().unwrap();
+        let file_name_os_string = entry.file_name();
+        let Some(file_name) = file_name_os_string.to_str() else {
+            continue;
+        };
 
         let new_line_prefix = if dir_entries.peek().is_none() {
-            println!("{}└── {}", line_prefix, file_name_str);
+            println!("{}└── {}", line_prefix, file_name);
             format!("{line_prefix}    ")
         } else {
-            println!("{}├── {}", line_prefix, file_name_str);
+            println!("{}├── {}", line_prefix, file_name);
             format!("{line_prefix}│   ")
         };
-        if entry.file_type().unwrap().is_dir() {
-            print_dir_recursively(&entry.path(), &new_line_prefix)
+
+        match entry.file_type() {
+            Err(_) => {
+                continue;
+            },
+            Ok(file_type) => {
+                if file_type.is_dir()  {
+                    print_dir_recursively(&entry.path(), &new_line_prefix) 
+                }
+            }
         }
     }
 }
