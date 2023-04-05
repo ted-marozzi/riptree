@@ -4,7 +4,12 @@ use std::{
 };
 
 pub fn run(path: &Path) {
-    println!("{}", path.display());
+    if path.exists() {
+        println!("{}", path.display());
+    } else {
+        println!("The path provided doesn't exist.\nPath: {}", path.display());
+        return;
+    }
     print_dir_recursively(path, "");
 }
 

@@ -1,15 +1,16 @@
-use std::{env, path::Path};
+use std::{path::Path};
+use clap::Parser;
 
+/// Simple program to greet a person
+#[derive(Parser, Debug)]
+#[command(name = "riptree")]
+#[command(about = "Tree but in Rust", long_about = None)]
+struct Args {
+    path: Option<std::path::PathBuf>,
+}
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let args = Args::parse();
+    let path = args.path.unwrap_or(Path::new(".").to_path_buf());
 
-    let path = if args.len() == 0 || args.len() == 1 {
-        Path::new(".")
-    } else if args.len() == 2 {
-        Path::new(args.get(1).unwrap())
-    } else {
-        panic!("riptree received more than one argument: {:?}.\nriptree only accepts one argument for the Path to tree which defaults to current working directory.", args)
-    };
-
-    riptree::run(path)
+    riptree::run(&path)
 }
