@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       
-      - name: Install Cargo Set Version
+      - name: Install cargo set-version
         uses: actions-rs/cargo@v1
         with:
           command: install set-version
