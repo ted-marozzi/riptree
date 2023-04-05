@@ -1,3 +1,4 @@
+use colored::*;
 use std::{
     fs::{self},
     path::Path,
@@ -5,9 +6,13 @@ use std::{
 
 pub fn run(path: &Path) {
     if path.exists() {
-        println!("{}", path.display());
+        println!("{}", path.display().to_string().green().bold());
         let (dirs_count, files_count) = print_tree(path);
-        println!("\n{dirs_count} directories, {files_count} files");
+        println!(
+            "\n{} directories, {} files",
+            dirs_count.to_string().green().bold(),
+            files_count.to_string().green().bold()
+        );
     } else {
         println!("The path provided doesn't exist.\nPath: {}", path.display());
     }
@@ -36,29 +41,36 @@ fn print_dir_recursively(path: &Path, line_prefix: &str) -> (u32, u32) {
             continue;
         };
 
+        let file_type = match entry.file_type() {
+            Ok(file_type) => file_type,
+            Err(_) => continue,
+        };
+
+        let is_dir = file_type.is_dir();
+        let is_file = file_type.is_file();
+
+        let file_name_colored = if is_dir {
+            file_name.blue().bold()
+        } else {
+            file_name.white()
+        };
+
         let new_line_prefix = if dir_entries.peek().is_some() {
-            println!("{}├── {}", line_prefix, file_name);
+            println!("{}├── {}", line_prefix, file_name_colored);
             format!("{line_prefix}│   ")
         } else {
-            println!("{}└── {}", line_prefix, file_name);
+            println!("{}└── {}", line_prefix, file_name_colored);
             format!("{line_prefix}    ")
         };
 
-        match entry.file_type() {
-            Ok(file_type) => {
-                if file_type.is_dir() {
-                    dirs_count += 1;
-                    let (child_dirs_count, child_files_count) =
-                        print_dir_recursively(&entry.path(), &new_line_prefix);
-                    dirs_count += child_dirs_count;
-                    files_count += child_files_count;
-                } else if file_type.is_file() {
-                    files_count += 1;
-                }
-            }
-            Err(_) => {
-                continue;
-            }
+        if is_dir {
+            dirs_count += 1;
+            let (child_dirs_count, child_files_count) =
+                print_dir_recursively(&entry.path(), &new_line_prefix);
+            dirs_count += child_dirs_count;
+            files_count += child_files_count;
+        } else if is_file {
+            files_count += 1;
         }
     }
     return (dirs_count, files_count);
