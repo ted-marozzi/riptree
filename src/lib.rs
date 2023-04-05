@@ -9,8 +9,16 @@ pub fn run(path: &Path) {
 }
 
 fn print_dir_recursively(path: &Path, line_prefix: &str) {
-    let mut dir_entries = fs::read_dir(path).unwrap().map(|d| d.unwrap()).peekable();
-    while let Some(entry) = dir_entries.next() {
+    let mut dir_entries = match fs::read_dir(path) {
+        Err(_) => return,
+        Ok(entries) => entries.peekable()
+    };
+
+    while let Some(entry_result) = dir_entries.next() {
+        let Ok(entry) = entry_result else {
+            continue;
+        };
+    
         let file_name_os_string = entry.file_name();
         let Some(file_name) = file_name_os_string.to_str() else {
             continue;
@@ -30,9 +38,10 @@ fn print_dir_recursively(path: &Path, line_prefix: &str) {
             },
             Ok(file_type) => {
                 if file_type.is_dir()  {
-                    print_dir_recursively(&entry.path(), &new_line_prefix) 
+                    print_dir_recursively(&entry.path(), &new_line_prefix);
                 }
             }
         }
     }
+    
 }
