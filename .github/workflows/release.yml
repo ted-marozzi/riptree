@@ -22,9 +22,14 @@ jobs:
         with:
           toolchain: stable
 
+      - name: Install cargo-edit
+        uses: baptiste0928/cargo-install@v2
+        with:
+          crate: cargo-edit
+
       # This is used as the version field in clap
       - name: Update Cargo.toml version
-        run: cargo install cargo-edit && cargo set-version ${{ github.event.release.tag_name }}
+        run: cargo set-version ${{ github.event.release.tag_name }}
 
       - name: Compile and release
         uses: rust-build/rust-build.action@v1.4.3
