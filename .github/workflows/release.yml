@@ -19,6 +19,11 @@ jobs:
     steps:
       - uses: actions/checkout@master
       
+      - name: Install Cargo Set Version
+        uses: actions-rs/cargo@v1
+        with:
+          command: install set-version
+
       # This is used as the version field in clap
       - name: Update Cargo.toml version
         uses: actions-rs/cargo@v1
