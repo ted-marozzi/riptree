@@ -3,8 +3,7 @@ use clap::Parser;
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
-#[command(name = "riptree")]
-#[command(about = "Tree but in Rust", long_about = None)]
+#[command(name = "riptree", about = "Tree but in Rust", version)]
 struct Args {
     path: Option<std::path::PathBuf>,
 }
